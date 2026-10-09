@@ -1,0 +1,488 @@
+{
+  "name": "AI Candidate Screening Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -5344,
+        368
+      ],
+      "id": "2819b8ba-d195-4610-9d7f-ed2ef5988a88",
+      "name": "Extract Candidate Resume Text"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "[JOB_DESCRIPTION_FILE_ID]",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -5120,
+        368
+      ],
+      "id": "fbb78220-e230-46c1-bd99-22c537bf9694",
+      "name": "Retrieve Job Description"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Capture Candidate Application').item.json.Email }}",
+        "subject": "Thanks for your application!",
+        "message": "=Hi {{ $('Capture Candidate Application').item.json['Full Name'].split(\" \").first() }},<br><br>Thanks for applying to [COMPANY_NAME]. We have received your application and will review it shortly.<br><br>We will contact you if there is a next step.<br><br>Best,<br>[RECRUITING_TEAM_NAME]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -5360,
+        752
+      ],
+      "id": "56556af2-ba2d-4c00-955f-1327422071b0",
+      "name": "Send Application Confirmation"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "Resume",
+        "name": "={{ $('Capture Candidate Application').item.json['Full Name'] }} - CV",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "[GOOGLE_DRIVE_FOLDER_ID]",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -5776,
+        368
+      ],
+      "id": "c5daae1d-8649-4ac3-86ec-4390f5cd8e6a",
+      "name": "Store Candidate Resume"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "[NOTION_DATABASE_ID]",
+          "mode": "id"
+        },
+        "title": "={{ $('Capture Candidate Application').item.json['Full Name'] }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "First Name|rich_text",
+              "textContent": "={{ $('Capture Candidate Application').item.json['Full Name'].split(\" \").first() }}"
+            },
+            {
+              "key": "Last Name|rich_text",
+              "textContent": "={{ $('Capture Candidate Application').item.json['Full Name'].split(\" \").last() }}"
+            },
+            {
+              "key": "Email|email",
+              "emailValue": "={{ $('Capture Candidate Application').item.json.Email }}"
+            },
+            {
+              "key": "Phone|phone_number",
+              "phoneValue": "={{ $('Capture Candidate Application').item.json['Phone Number'] }}"
+            },
+            {
+              "key": "Application Date|date",
+              "date": "={{ $now.format('yyyy-MM-dd') }}"
+            },
+            {
+              "key": "Resume|url",
+              "urlValue": "={{ $('Store Candidate Resume').item.json.webViewLink }}"
+            },
+            {
+              "key": "Strengths|rich_text",
+              "textContent": "={{ $('AI Screening Assistant').item.json.output.candidate_strengths.join(\"\\n\\n\") }}"
+            },
+            {
+              "key": "Weaknesses|rich_text",
+              "textContent": "={{ $('AI Screening Assistant').item.json.output.candidate_weaknesses.join(\"\\n\\n\") }}"
+            },
+            {
+              "key": "Risk Factor|rich_text",
+              "textContent": "={{ $('AI Screening Assistant').item.json.output.risk_factor.score }}\n\n{{ $('AI Screening Assistant').item.json.output.risk_factor.explanation }}"
+            },
+            {
+              "key": "Reward Factor|rich_text",
+              "textContent": "={{ $('AI Screening Assistant').item.json.output.reward_factor.score }}\n\n{{ $('AI Screening Assistant').item.json.output.reward_factor.explanation }}"
+            },
+            {
+              "key": "Overall Fit|number",
+              "numberValue": "={{ $('AI Screening Assistant').item.json.output.overall_fit_rating }}"
+            },
+            {
+              "key": "Justification|rich_text",
+              "textContent": "={{ $('AI Screening Assistant').item.json.output.justification_for_rating }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -5136,
+        752
+      ],
+      "id": "4f9196df-02d9-4d2f-bbf8-b6362fbf968c",
+      "name": "Log Screening Result"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -4896,
+        368
+      ],
+      "id": "ed2c22bb-bb3d-4de9-9172-ca549c43e8b4",
+      "name": "Extract Job Description Text"
+    },
+    {
+      "parameters": {
+        "formTitle": "Candidate Application Form",
+        "formDescription": "Submit your contact details and CV for review.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone Number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Resume",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".pdf"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -6016,
+        368
+      ],
+      "id": "0d04614e-d31c-414d-8e97-8b68711fdc28",
+      "name": "Capture Candidate Application"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Candidate Resume:\n{{ $('Extract Candidate Resume Text').item.json.text }}\n\nJob Description:\n{{ $json.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "# Role\nYou are an AI-assisted recruiting operations analyst. Your job is to compare a candidate resume with a job description and produce a factual screening summary for a human recruiter.\n\n# Inputs\n- Candidate resume: {{ $('Extract Candidate Resume Text').item.json.text }}\n- Job description: {{ $json.text }}\n\n# Rules\n1. Use only evidence present in the resume and job description. Do not invent experience, skills, dates, education, seniority, availability, location, or performance.\n2. Evaluate only job-related qualifications and explicit requirements. Do not use or infer protected or sensitive traits such as race, ethnicity, religion, sex, age, disability, health, family status, or similar personal characteristics.\n3. Treat missing information as unknown, not as a weakness.\n4. Separate direct evidence from inference. Where the evidence is weak or ambiguous, say so.\n5. Quote or paraphrase the relevant resume evidence briefly when explaining a match.\n6. Distinguish required qualifications from preferred qualifications.\n7. Do not make, recommend, or automate a final hiring, rejection, promotion, compensation, or ranking decision. This output is screening support for human review only.\n8. Flag requirements that need human verification, such as work authorization, references, portfolio quality, certifications, or communication skills unless clearly evidenced in the supplied documents.\n\n# Process\nA. Extract the main required and preferred criteria from the job description.\nB. Map the resume evidence to each criterion.\nC. List clear matches and evidence gaps.\nD. Add concise questions or checks a recruiter could use to verify unknowns.\nE. Produce the structured output only.\n\n# Output standard\nBe concise, factual, and easy for a recruiter to scan. Do not use personality judgments or unsupported predictions."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -5808,
+        656
+      ],
+      "id": "dcc54975-ebdc-42b1-82c9-c53018be9fe2",
+      "name": "AI Screening Assistant"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -5856,
+        848
+      ],
+      "id": "5f21fe20-4f92-4b55-8503-8e392da9aff8",
+      "name": "OpenAI Screening Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "[OPENAI_CREDENTIAL_ID]",
+          "name": "[OPENAI_CREDENTIAL_NAME]"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"name\": \"resume_screening_support\",\n  \"description\": \"Structured, evidence-based screening support for comparing a resume with a job description. Human review required.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"candidate_strengths\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"description\": \"Specific job-related strengths supported by the resume.\"\n    },\n    \"requirement_matches\": {\n      \"type\": \"array\",\n      \"description\": \"Required or preferred criteria matched to evidence.\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"requirement\": {\n            \"type\": \"string\"\n          },\n          \"status\": {\n            \"type\": \"string\",\n            \"enum\": [\n              \"matched\",\n              \"partially_matched\",\n              \"not_evidenced\"\n            ]\n          },\n          \"evidence\": {\n            \"type\": \"string\"\n          },\n          \"confidence\": {\n            \"type\": \"string\",\n            \"enum\": [\n              \"high\",\n              \"medium\",\n              \"low\"\n            ]\n          }\n        },\n        \"required\": [\n          \"requirement\",\n          \"status\",\n          \"evidence\",\n          \"confidence\"\n        ]\n      }\n    },\n    \"evidence_gaps\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"description\": \"Important requirements not evidenced in the supplied documents.\"\n    },\n    \"verification_questions\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"description\": \"Questions or checks for human review.\"\n    },\n    \"screening_summary\": {\n      \"type\": \"string\",\n      \"description\": \"Brief factual summary of alignment and uncertainty.\"\n    },\n    \"human_review_required\": {\n      \"type\": \"boolean\",\n      \"description\": \"Always true for this workflow.\"\n    }\n  },\n  \"required\": [\n    \"candidate_strengths\",\n    \"requirement_matches\",\n    \"evidence_gaps\",\n    \"verification_questions\",\n    \"screening_summary\",\n    \"human_review_required\"\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -5584,
+        848
+      ],
+      "id": "fc6fac87-4fee-445d-bfd3-f1290ec2d257",
+      "name": "Screening Result Schema"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -5568,
+        368
+      ],
+      "id": "109a7774-951d-4393-b38f-4fd6b28668f5",
+      "name": "Download Candidate Resume"
+    },
+    {
+      "parameters": {
+        "content": "1. Capture Application\n\nCollect candidate details + CV → store the submission for processing.",
+        "height": 240,
+        "width": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -6096,
+        288
+      ],
+      "typeVersion": 1,
+      "id": "c65bfaa3-8cb2-4c59-9aa2-63702e15256d",
+      "name": "1._Capture_Application"
+    },
+    {
+      "parameters": {
+        "content": "2. Prepare Screening Data\n\nRetrieve the job description → extract clean text from the candidate CV and job post.",
+        "height": 240,
+        "width": 1088,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -5808,
+        288
+      ],
+      "typeVersion": 1,
+      "id": "a25be57b-5754-44e8-8640-f1872842a5de",
+      "name": "2._Prepare_Screening_Data"
+    },
+    {
+      "parameters": {
+        "content": "3. AI Screening Support\n\nCompare the CV against explicit job criteria → return evidence, matches, gaps, and verification questions.",
+        "height": 432,
+        "width": 464,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -5936,
+        576
+      ],
+      "typeVersion": 1,
+      "id": "e75cfd97-b392-4ce9-ac72-b20d7a83d7ec",
+      "name": "3._AI_Screening_Support"
+    },
+    {
+      "parameters": {
+        "content": "4. Notify + Log Results\n\nSend an application confirmation → write the structured screening record to the recruiting database.",
+        "height": 432,
+        "width": 496,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -5440,
+        576
+      ],
+      "typeVersion": 1,
+      "id": "a5f8bdc6-c3bb-4da7-a2a0-ac30b48f6cd9",
+      "name": "4._Notify_+_Log_Results"
+    },
+    {
+      "parameters": {
+        "content": "# AI CANDIDATE SCREENING ASSISTANT\n\nApplication intake → document extraction → AI-assisted screening → structured record → candidate confirmation",
+        "height": 80,
+        "width": 560,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -5648,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "28e213e0-709f-4b6a-b663-f20ac1c238de",
+      "name": "AI_CANDIDATE_SCREENING_ASSISTANT"
+    },
+    {
+      "parameters": {
+        "content": "Portfolio / ICP Use Cases\n\nRecruiting teams: reduce repetitive CV review work.\nInternal HR teams: standardise first-pass screening notes.\nStaffing agencies: turn incoming applications into structured records.\n\nHuman review remains required for every hiring decision.",
+        "height": 260,
+        "width": 520
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -5520,
+        1808
+      ],
+      "typeVersion": 1,
+      "id": "584dd7fb-f04c-45f0-b5fe-bb237f7ed094",
+      "name": "Portfolio_/_ICP_Use_Cases"
+    }
+  ],
+  "connections": {
+    "Extract Candidate Resume Text": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Job Description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Job Description": {
+      "main": [
+        [
+          {
+            "node": "Extract Job Description Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Application Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Log Screening Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Candidate Resume": {
+      "main": [
+        [
+          {
+            "node": "Download Candidate Resume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Job Description Text": {
+      "main": [
+        [
+          {
+            "node": "AI Screening Assistant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Capture Candidate Application": {
+      "main": [
+        [
+          {
+            "node": "Store Candidate Resume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Screening Assistant": {
+      "main": [
+        [
+          {
+            "node": "Send Application Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Screening Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Screening Assistant",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Screening Result Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Screening Assistant",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Candidate Resume": {
+      "main": [
+        [
+          {
+            "node": "Extract Candidate Resume Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {}
+}

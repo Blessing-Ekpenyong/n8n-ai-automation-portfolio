@@ -1,0 +1,660 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "New Project Enquiry",
+        "formDescription": "Use this form to capture a new project enquiry and route it through the automated sales email workflow.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full Name",
+              "placeholder": "Alex Morgan",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "lead@example.com",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Company Name",
+              "placeholder": "Example Company"
+            },
+            {
+              "fieldLabel": "Intent",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Lead Generation Service"
+                  },
+                  {
+                    "option": "Content Creation Service"
+                  },
+                  {
+                    "option": "Onboarding Automation service"
+                  },
+                  {
+                    "option": "General Automation Support"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Budget",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "<$1,000"
+                  },
+                  {
+                    "option": "$1,000-$5,000"
+                  },
+                  {
+                    "option": "$5,000-$9,000"
+                  },
+                  {
+                    "option": "$9,000+"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Project Description",
+              "placeholder": "We need an automation that...",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Timeline",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Within 1 week"
+                  },
+                  {
+                    "option": "1 week - 3 weeks"
+                  },
+                  {
+                    "option": "3 weeks+"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -4224,
+        560
+      ],
+      "id": "ec10d0d8-d9e6-46e4-872a-58e8074dee8d",
+      "name": "Receive Lead Intake",
+      "webhookId": "[FORM_WEBHOOK_ID]"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the new lead intake information:\n\n## Lead\nName: {{ $json['Full Name'] }}\nEmail: {{ $json.Email }}\nCompany: {{ $json['Company Name'] }}\n\n## Project\nIntent: {{ $json.Intent }}\nBudget: {{ $json.Budget }}\nDescription: {{ $json['Project Description'] }}\nTimeline: {{ $json.Timeline }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert sales person for an agency that delivers AI solutions. Your job is to respnd to incoming leads by addressing their needs in a professional manner. You will receive information like the lead's project description and timeline and your goal is to convince them that wee are the best AI Agency on the market.\n\n##Tools\nProjects - Use this tool to search through previous projects we've done that can be used to include inside of the email as results\n\n\n##Rules\n1) Keep the email concise and professional and under 100 words\n2) Your main objective is to convice the lead to book in a call. Your job is to make them believe that we can delivery the project they have described and exceed their expecations. \n3) Retrieve information about previous projects to share with the lead to prove that our team is capable of handling their project. Find a similar project we have done to share with the lead. Share the result of how we helped the client.\n4) ALWAYS write the email in HTML with newlines <br><br>\n5) DON'T add any emojis in the email \n\n\n##Final Notes\nSign off emails as [YOUR_NAME], [AGENCY_NAME]\nHere is the current date/time: {{ $now }}\n"
+        },
+        "systemMessage": "=## Role\nYou are an AI sales email assistant for [AGENCY_NAME], a company that provides [PRIMARY_SERVICES].\n\nYour job is to turn a new lead's intake information into a short, credible, personalized sales email that encourages the lead to book a call.\n\n## Inputs\nYou will receive:\n- Lead name\n- Company name\n- Service or project intent\n- Budget\n- Project description\n- Timeline\n\n## Tool: Search Past Projects\nUse this tool to find a previous project that is genuinely relevant to the lead's request.\n\nWhen using the tool:\n1. Search for a project that matches the lead's problem, industry, service, or workflow.\n2. Use only information returned by the tool.\n3. Mention the project briefly and state the actual result recorded in the source.\n4. Never invent a client, project, result, metric, capability, testimonial, or case study.\n5. If no relevant project is found, do not create one. Write the email without a case study.\n\n## Writing Rules\n1. Keep the email concise: maximum 120 words.\n2. Use the lead's name and company name naturally when available.\n3. Show that you understand the specific problem described in the intake form.\n4. Explain briefly how [AGENCY_NAME] can help.\n5. Use one verified past-project example when one is available.\n6. End with one clear call to action to book a call or discuss the project.\n7. Do not make guarantees or claim that [AGENCY_NAME] is the \"best\" unless the input explicitly provides verified proof.\n8. Do not mention the lead's budget unless it is necessary and appropriate.\n9. Do not pressure the lead.\n10. Do not use emojis.\n11. Do not use generic filler such as \"I hope this email finds you well.\"\n12. Write valid HTML using <br><br> for paragraph breaks.\n13. Return only the structured output required by the output parser.\n\n## Email Structure\n- Personal opening\n- One sentence showing understanding of the project\n- One short sentence explaining the relevant solution\n- One verified proof point from Search Past Projects, when available\n- Clear call to action\n- Sign-off\n\n## Sign-off\n[YOUR_NAME]\n[AGENCY_NAME]\n\nCurrent date/time: {{ $now }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -3728,
+        560
+      ],
+      "id": "207e747b-e529-4419-b28b-327c3cf47bf6",
+      "name": "Draft Sales Email"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "[GOOGLE_SHEET_ID]",
+          "mode": "list",
+          "cachedResultName": "Lead Intake Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/[GOOGLE_SHEET_ID]/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/[GOOGLE_SHEET_ID]/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Full Name": "={{ $json['Full Name'] }}",
+            "Email": "={{ $json.Email }}",
+            "Company Name": "={{ $json['Company Name'] }}",
+            "Intent": "={{ $json.Intent }}",
+            "Budget": "={{ $json.Budget }}",
+            "Project Description": "={{ $json['Project Description'] }}",
+            "Timeline": "={{ $json.Timeline }}",
+            "submittedAt": "={{ $json.submittedAt.toDateTime().format('DD') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Intent",
+              "displayName": "Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Project Description",
+              "displayName": "Project Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timeline",
+              "displayName": "Timeline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "submittedAt",
+              "displayName": "submittedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -4016,
+        560
+      ],
+      "id": "2b90b44f-5643-4166-b6d9-e5bae5cbfc30",
+      "name": "Log Lead Intake"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "[GOOGLE_SHEET_ID]",
+          "mode": "list",
+          "cachedResultName": "Lead Intake Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/[GOOGLE_SHEET_ID]/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "[PROJECTS_SHEET_GID_OR_NAME]",
+          "mode": "list",
+          "cachedResultName": "Projects Completed",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/[GOOGLE_SHEET_ID]/edit"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -3568,
+        800
+      ],
+      "id": "f4b65ccc-45da-4843-9c82-55105ac879c5",
+      "name": "Search Past Projects"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc3cc979-4afb-4a62-8434-1d5894f88b74",
+              "name": "subject",
+              "value": "={{ $json.output.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "381184c0-33cb-4318-93fa-a6b017ab2b88",
+              "name": "email_body",
+              "value": "={{ $json.output.email_body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3296,
+        560
+      ],
+      "id": "452d6172-2a53-4dda-a20e-fd44f1c79447",
+      "name": "Prepare Email for Review"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"subject\": {\n\t\t\t\"type\": \"string\",\n            \"description\":\"the subject line of the email\"\n\t\t},\n\t\t\"email_body\": {\n\t\t\t\"type\": \"string\",\n           \"description\":\"The body of the email\"\n\t\t\t}\n\t\t},\n      \"required\": [\"subject\",\"email_body\"]\n\t}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -3104,
+        976
+      ],
+      "id": "ca479dba-b2f9-4456-8611-30080398276f",
+      "name": "Sales Email Output Schema"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -2960,
+        976
+      ],
+      "id": "68ec5746-01d9-43d1-83fd-6e08102d962f",
+      "name": "Claude Chat Model"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "[INTERNAL_REVIEWER_EMAIL]",
+        "subject": "=ACTION REQUIRED: Review New Lead Email | {{ $('Receive Lead Intake').item.json.Budget }}",
+        "message": "=A new lead email is ready for human review.\n\n<h2>PROJECT DESCRIPTION</h2>\n{{ $('Receive Lead Intake').item.json['Project Description'] }}\n\n<h2>EMAIL DRAFT</h2>\n{{ $json.email_body }}\n\nReply with either:\n- APPROVE\n- Or your revision instructions\n",
+        "responseType": "freeText",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -3120,
+        560
+      ],
+      "id": "12210ac4-dee1-4ebc-8bc9-e07b33325852",
+      "name": "Request Human Approval",
+      "webhookId": "[APPROVAL_WEBHOOK_ID]"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.data.text }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "approved",
+              "description": "Use approved when the reviewer clearly accepts the email and wants it sent. Examples: APPROVE, approved, looks good, send it, that's fine."
+            },
+            {
+              "category": "needs_revision",
+              "description": "Use needs_revision when the reviewer asks for changes, rejects the current draft, or gives editing instructions. Examples: make it shorter, change the CTA, add another project, I don't like it, revise this."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        -2944,
+        560
+      ],
+      "id": "104a2453-17a4-4825-963e-15ad799c0ccb",
+      "name": "Classify Approval"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=## Current Email Draft\n{{ $('Prepare Email for Review').item.json.email_body }}\n\n## Human Review Feedback\n{{ $json.data.text }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a helpful intellignet email assistant who needs to update a sales email based on the provided feedback\n\n##Tools\nProjects - Use this tool to search through previous projects we've done that can be used to include inside of the email as results\n\n\n##Rules\n1) Keep the email concise and professional \n2) Your main objective is to convice the lead to book in a call. Your job is to make them believe that we can delivery the project they have described and exceed their expecations. \n3) Retrieve information about previous projects to share with the lead to prove that our team is capable of handling their project. Find a similar project we have done to share with the lead. Share the result of how we helped the client.\n4) ALWAYS write the email in HTML with newlines <br><br>\n5) DON'T add any emojis in the email \n\n##Final Notes\nSign off emails as [YOUR_NAME], [AGENCY_NAME]\nHere is the current date/time: {{ $now }}\n"
+        },
+        "systemMessage": "=## Role\nYou are an AI sales email editor for [AGENCY_NAME].\n\nYour job is to revise an existing sales email using the human reviewer's feedback while preserving correct lead information and verified project evidence.\n\n## Inputs\nYou will receive:\n- The current email draft\n- Feedback from the human reviewer\n- The original lead intake information\n\n## Tool: Search Past Projects\nUse this tool when the reviewer asks for a different, stronger, or more relevant project example.\n\nRules:\n1. Search for a genuinely relevant project.\n2. Use only information returned by the tool.\n3. Never invent a client, project, result, metric, testimonial, or capability.\n4. If no suitable project is found, remove the unsupported claim rather than inventing one.\n\n## Editing Rules\n1. Apply the reviewer's feedback exactly when it is clear.\n2. Keep the email concise and professional, maximum 120 words.\n3. Preserve the lead's name, company, project details, budget, and timeline only when relevant.\n4. Keep the main goal: encourage the lead to book a call.\n5. Do not add unsupported claims or guarantees.\n6. Do not use emojis.\n7. Do not use generic filler.\n8. Write valid HTML using <br><br> for paragraph breaks.\n9. Return only the structured output required by the output parser.\n\n## Sign-off\n[YOUR_NAME]\n[AGENCY_NAME]\n\nCurrent date/time: {{ $now }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -2480,
+        720
+      ],
+      "id": "ff6ff751-b858-4ae3-bbda-309efa405118",
+      "name": "Revise Sales Email"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Receive Lead Intake').item.json.Email }}",
+        "subject": "={{ $('Prepare Email for Review').item.json.subject }}",
+        "message": "={{ $('Prepare Email for Review').item.json.email_body }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -2432,
+        544
+      ],
+      "id": "4429089a-e3d3-4000-b791-b7090ea5b7fa",
+      "name": "Send Approved Email",
+      "webhookId": "[SEND_WEBHOOK_ID]"
+    },
+    {
+      "parameters": {
+        "content": "## Human Approval Gate\nThe AI draft is sent to an internal reviewer before it reaches the lead. The reviewer can approve the message or return revision instructions.",
+        "height": 512,
+        "width": 688,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3376,
+        432
+      ],
+      "typeVersion": 1,
+      "id": "41f45170-4dd5-4590-b22f-035fbc1c3774",
+      "name": "Human Approval Gate"
+    },
+    {
+      "parameters": {
+        "content": "## Approval Routing\nThe reviewer response is classified into two paths:\n- approved → send the email\n- needs_revision → revise the draft with the AI agent and return it for review",
+        "height": 512,
+        "width": 576,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2672,
+        432
+      ],
+      "typeVersion": 1,
+      "id": "025f9e4f-ca34-4785-8236-2f10e8c81c46",
+      "name": "Approval Routing"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2960,
+        704
+      ],
+      "id": "f16822b5-7992-449e-be6c-ae4d77dc2e52",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "content": "## Lead Intake & Logging\nA new project enquiry enters through the form and is written to the lead-tracking sheet before the AI email is drafted.",
+        "height": 288,
+        "width": 432
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -4272,
+        432
+      ],
+      "typeVersion": 1,
+      "id": "e5f8602e-3b7c-4169-be2a-e89afde958bb",
+      "name": "Lead Intake & Logging"
+    },
+    {
+      "parameters": {
+        "content": "## AI Sales Email Drafting\nThe AI agent reads the lead details, searches verified past projects, and drafts a concise HTML sales email using only evidence available in the connected project data.",
+        "height": 512,
+        "width": 432,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3824,
+        432
+      ],
+      "typeVersion": 1,
+      "id": "ec3ab376-00fc-427e-b7a9-71c4c87afd9a",
+      "name": "AI Sales Email Drafting"
+    },
+    {
+      "parameters": {
+        "content": "# HUMAN-IN-THE-LOOP AI SALES OUTREACH\nLead intake → data logging → AI email draft → human review → approve or revise → send",
+        "height": 80,
+        "width": 704,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3568,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "334721d4-c858-4dd5-b227-ef586018029c",
+      "name": "Human-in-the-Loop AI Sales Outreach"
+    }
+  ],
+  "connections": {
+    "Receive Lead Intake": {
+      "main": [
+        [
+          {
+            "node": "Log Lead Intake",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft Sales Email": {
+      "main": [
+        [
+          {
+            "node": "Prepare Email for Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Lead Intake": {
+      "main": [
+        [
+          {
+            "node": "Draft Sales Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Past Projects": {
+      "ai_tool": [
+        [
+          {
+            "node": "Draft Sales Email",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Email for Review": {
+      "main": [
+        [
+          {
+            "node": "Request Human Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sales Email Output Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Draft Sales Email",
+            "type": "ai_outputParser",
+            "index": 0
+          },
+          {
+            "node": "Revise Sales Email",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Draft Sales Email",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Revise Sales Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request Human Approval": {
+      "main": [
+        [
+          {
+            "node": "Classify Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Approval": {
+      "main": [
+        [
+          {
+            "node": "Send Approved Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Revise Sales Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Revise Sales Email": {
+      "main": [
+        [
+          {
+            "node": "Prepare Email for Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classify Approval",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "templateNotes": "Portfolio-safe template. Connect your own Google Sheets, Anthropic/OpenAI, and Gmail credentials. Replace bracketed placeholders such as [AGENCY_NAME], [YOUR_NAME], [INTERNAL_REVIEWER_EMAIL], [GOOGLE_SHEET_ID], and [PROJECTS_SHEET_GID_OR_NAME] before activating."
+  },
+  "name": "Human-in-the-Loop AI Sales Outreach"
+}

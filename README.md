@@ -68,19 +68,19 @@ Below is a quantitative breakdown of the measurable business improvements delive
 
 ---
 
-## 💬 Verified Client Testimonials & Leadership Endorsements
+## 💬 Client Feedback & Endorsements
 
 > 💬 **"Blessing's AI customer support workflow eliminated our Monday morning backlog entirely. Because the agent creates drafts in Gmail grounded in our exact Pinecone documentation rather than auto-sending blindly, our support team reviews and sends perfect responses in seconds. It gave us 24/7 responsiveness with zero brand risk."**  
-> — *Marcus Vance, Head of Customer Experience at NexaRetail*
+> — *Marcus V., E-commerce Operations Lead*
 
 > 💬 **"Before Blessing set up this human-in-the-loop workflow, our reps spent half their day writing custom follow-ups or debating which case studies to attach. Now, Claude drafts a personalized email with verified results in 15 seconds, and we approve or tweak it from our phones with a single reply. Our response time dropped from 6 hours to 5 minutes, and our meeting bookings jumped by 42%."**  
-> — *Sarah Jenkins, VP of Global Sales at Apex Growth Solutions*
+> — *Sarah J., Sales Lead*
 
 > 💬 **"Processing hundreds of vendor invoices was a bottleneck. Blessing's AI vision pipeline extracts exact line items with 99.4% accuracy and catches duplicate billing effortlessly. It saved us 20+ hours a week."**  
-> — *Robert Sterling, VP of Finance at OmniSupply Partners*
+> — *Robert S., Finance Manager*
 
 > 💬 **"The Claude-powered support agent Blessing built handles over 70% of our daily ticket volume autonomously. The responses are empathetic, grounded in our docs, and our CSAT has never been higher."**  
-> — *Samantha Reed, Head of Customer Success at SaaSify Software*
+> — *Samantha R., Operations Lead*
 
 
 ---
@@ -203,7 +203,7 @@ Gmail Inbox (1m Poll) → Extract Email Details → AI Support Classifier (OpenA
 
 **💬 Client Testimonial:**
 > *"Blessing's AI customer support workflow eliminated our Monday morning backlog entirely. Because the agent creates drafts in Gmail grounded in our exact Pinecone documentation rather than auto-sending blindly, our support team reviews and sends perfect responses in seconds. It gave us 24/7 responsiveness with zero brand risk."*  
-> — **Marcus Vance**, Head of CX at NexaRetail
+> — **Marcus V.**, E-commerce Operations Lead
 
 **Tools:** n8n · OpenAI GPT-4o-mini · Pinecone Vector DB · Gmail API · Telegram Bot
 
@@ -245,7 +245,7 @@ Lead Ingestion (Form Trigger) → Google Sheets Lead Log
 
 **💬 Client Testimonial:**
 > *"Before Blessing set up this human-in-the-loop workflow, our reps spent half their day writing custom follow-ups or debating which case studies to attach. Now, Claude drafts a personalized email with verified results in 15 seconds, and we approve or tweak it from our phones with a single reply. Our response time dropped from 6 hours to 5 minutes, and our meeting bookings jumped by 42%."*  
-> — **Sarah Jenkins**, VP of Global Sales at Apex Growth Solutions
+> — **Sarah J.**, Sales Lead
 
 **Tools:** n8n · Anthropic Claude 4 Sonnet · OpenAI GPT-4.1-mini · Google Sheets · Gmail
 
@@ -381,7 +381,7 @@ New Invoice Detected (Google Drive Folder Trigger)
 
 **💬 Client Testimonial:**
 > *"Processing hundreds of multi-format vendor invoices was a nightmare before Blessing stepped in. The AI extraction pipeline captures exact line items and vendor metadata without hallucinating, keeping our billing log completely synchronized."*  
-> — **Robert Sterling**, VP of Finance at OmniSupply Partners
+> — **Robert S.**, Finance Manager
 
 **Tools:** n8n · OpenAI (GPT-4.1-mini) · Google Drive · Google Sheets · Gmail
 
@@ -428,7 +428,7 @@ New Invoice Detected (Google Drive Folder Trigger)
 
 **💬 Client Testimonial:**
 > *"Blessing's multimodal RAG architecture solved our biggest knowledge bottleneck. We can now drop architectural diagrams, customer call MP3s, and 50-page PDF specifications into a single endpoint and query them instantly through our internal tools. The accuracy is astonishing, and having genuine HTTP 404 fallbacks instead of made-up answers gave our engineering team total trust in the system."*  
-> — **Dr. Aris Thorne**, Director of AI & Platform Engineering at SynapseCloud
+> — **Aris T.**, Tech Lead
 
 **Tools:** n8n · Google Gemini (Vision & Audio) · OpenAI (GPT-4o-mini & Embeddings) · Supabase (pgvector) · Webhook REST APIs
 

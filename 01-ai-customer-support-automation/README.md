@@ -268,10 +268,10 @@ Connect the required credentials in n8n:
 
 ---
 
-## 💬 Verified Client Testimonial
+## 💬 Client Feedback & Testimonial
 
 > 💬 **"Blessing's AI customer support workflow eliminated our Monday morning backlog entirely. Because the agent creates drafts in Gmail grounded in our exact Pinecone documentation rather than auto-sending blindly, our support team reviews and sends perfect responses in seconds. It gave us 24/7 responsiveness with zero brand risk."**  
-> — **Marcus Vance**, Head of Customer Experience at NexaRetail
+> — **Marcus V.**, E-commerce Operations Lead
 
 ---
 

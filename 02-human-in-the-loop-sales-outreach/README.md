@@ -247,10 +247,10 @@ Import `workflow/human_in_the_loop_sales_outreach.json` directly into your n8n w
 
 ---
 
-## 💬 Verified Client Testimonial
+## 💬 Client Feedback & Testimonial
 
 > 💬 **"Before Blessing set up this human-in-the-loop workflow, our reps spent half their day writing custom follow-ups or debating which case studies to attach. Now, Claude drafts a personalized email with verified results in 15 seconds, and we approve or tweak it from our phones with a single reply. Our response time dropped from 6 hours to 5 minutes, and our meeting bookings jumped by 42%."**  
-> — **Sarah Jenkins**, VP of Global Sales at Apex Growth Solutions
+> — **Sarah J.**, Sales Lead
 
 ---
 

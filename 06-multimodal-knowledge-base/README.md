@@ -405,10 +405,10 @@ curl -X POST "https://your-n8n-domain.com/webhook/multimodal-kb/ask" \
 
 ---
 
-## 💬 Verified Client Testimonial
+## 💬 Client Feedback & Testimonial
 
 > 💬 **"Blessing's multimodal RAG architecture solved our biggest knowledge bottleneck. We can now drop architectural diagrams, customer call MP3s, and 50-page PDF specifications into a single endpoint and query them instantly through our internal tools. The accuracy is astonishing, and having genuine HTTP 404 fallbacks instead of made-up answers gave our engineering team total trust in the system."**  
-> — **Dr. Aris Thorne**, Director of AI & Platform Engineering at SynapseCloud
+> — **Aris T.**, Tech Lead
 
 ---
 
